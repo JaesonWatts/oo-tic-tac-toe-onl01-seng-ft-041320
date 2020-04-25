@@ -38,81 +38,81 @@ class TicTacToe
   end
 
   def valid_move?(index)
-  index.between?(0,8) && !position_taken?(index)
-end
+    index.between?(0,8) && !position_taken?(index)
+  end
 
-def turn_count
-  turn = 0
-  @board.each do |index|
-    if index == "X" || index == "O"
-      turn += 1
+  def turn_count
+    turn = 0
+    @board.each do |index|
+      if index == "X" || index == "O"
+        turn += 1
+      end
+    end
+    return turn
+  end
+
+  def current_player
+    #if the turn count is an even number, that means O just went, so the next/current player is X
+    num_turns = turn_count
+    if num_turns % 2 == 0
+      player = "X"
+    else
+      player = "O"
+    end
+    return player
+  end
+
+  def turn
+    puts "Please choose a number 1-9:"
+    user_input = gets.chomp
+    index = input_to_index(user_input)
+    if valid_move?(index)
+      player_token = current_player
+      move(index, player_token)
+      display_board
+    else
+      turn
     end
   end
-  return turn
-end
 
-def current_player
-  #if the turn count is an even number, that means O just went, so the next/current player is X
-  num_turns = turn_count
-  if num_turns % 2 == 0
-    player = "X"
-  else
-    player = "O"
+  def won?
+    WIN_COMBINATIONS.each {|win_combo|
+      index_0 = win_combo[0]
+      index_1 = win_combo[1]
+      index_2 = win_combo[2]
+  
+      position_1 = @board[index_0]
+      position_2 = @board[index_1]
+      position_3 = @board[index_2]
+  
+      if position_1 == "X" && position_2 == "X" && position_3 == "X"
+        return win_combo
+      elsif position_1 == "O" && position_2 == "O" && position_3 == "O"
+        return win_combo
+      end
+    }
+    return false
   end
-  return player
-end
 
-def turn
-  puts "Please choose a number 1-9:"
-  user_input = gets.chomp
-  index = input_to_index(user_input)
-  if valid_move?(index)
-    player_token = current_player
-    move(index, player_token)
-    display_board
-  else
-    turn
+  def full?
+    @board.all? {|index| index == "X" || index == "O"}
   end
-end
 
-def won?
-  WIN_COMBINATIONS.each {|win_combo|
-    index_0 = win_combo[0]
-    index_1 = win_combo[1]
-    index_2 = win_combo[2]
-
-    position_1 = @board[index_0]
-    position_2 = @board[index_1]
-    position_3 = @board[index_2]
-
-    if position_1 == "X" && position_2 == "X" && position_3 == "X"
-      return win_combo
-    elsif position_1 == "O" && position_2 == "O" && position_3 == "O"
-      return win_combo
+  def draw?
+    if !won? && full?
+      return true
+    else
+      return false
     end
-  }
-  return false
-end
-
-def full?
-  @board.all? {|index| index == "X" || index == "O"}
-end
-
-def draw?
-  if !won? && full?
-    return true
-  else
-    return false
   end
-end
-
-def over?
-  if won? || draw?
-    return true
-  else
-    return false
+  
+  def over?
+    if won? || draw?
+      return true
+    else
+      return false
+    end
   end
-end
 
   def winner
     index = []
